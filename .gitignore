@@ -1,0 +1,18 @@
+# Local development material
+/AGENTS.md
+/docs/
+/tests/
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Editor files and generated packages
+/.vscode/
+/.idea/
+/build/
+/dist/
+*.zip
+Thumbs.db
