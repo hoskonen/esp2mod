@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Petri Hoskonen
+# SPDX-License-Identifier: GPL-3.0-only
+
 """No-replace Windows file movement, independent of the MO2 and Qt runtimes."""
 
 import errno

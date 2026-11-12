@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Petri Hoskonen
+# SPDX-License-Identifier: GPL-3.0-only
+
 """Coordinate the filesystem move and the public MO2 refresh and mod-list APIs."""
 
 from dataclasses import dataclass

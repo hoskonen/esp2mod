@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Petri Hoskonen
+# SPDX-License-Identifier: GPL-3.0-only
+
 """Read-only selection and preview logic using MO2's public interfaces."""
 
 from collections import Counter
@@ -169,7 +172,10 @@ def destination_for(organizer, overwrite, mod_name):
         raise PreviewError("Enter a valid, non-reserved Windows mod name.")
 
     mods = configured_directory(organizer.modsPath(), "mods")
-    if mods.is_relative_to(overwrite) or overwrite.is_relative_to(mods):
+    # Windows aliases such as short names can hide overlap in a lexical comparison.
+    physical_mods = mods.resolve(strict=True)
+    physical_overwrite = overwrite.resolve(strict=True)
+    if physical_mods.is_relative_to(physical_overwrite) or physical_overwrite.is_relative_to(physical_mods):
         raise PreviewError("The mods and Overwrite directories must be separate.")
     destination = mods / mod_name
     if (

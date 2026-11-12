@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Petri Hoskonen
+# SPDX-License-Identifier: GPL-3.0-only
+
 """PyQt presentation for plugin selection, confirmation, and transfer feedback."""
 
 import logging
@@ -13,6 +16,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QMessageBox,
     QPushButton,
+    QSizePolicy,
     QToolTip,
 )
 
@@ -22,14 +26,12 @@ from .transfer import Transfer
 _LOG = logging.getLogger(__name__)
 
 
-def show_result(parent, title, text, *, error=False, details=None):
+def show_result(parent, title, text, *, error=False):
     box = QMessageBox(parent)
     box.setWindowTitle(title)
     box.setTextFormat(Qt.TextFormat.PlainText)
     box.setText(text)
     box.setIcon(QMessageBox.Icon.Warning if error else QMessageBox.Icon.Information)
-    if details:
-        box.setDetailedText(details)
     box.exec()
 
 
@@ -42,9 +44,12 @@ class OverwritePicker(QDialog):
         self._candidates = discover(organizer)
         self._show_all = False
         self._transfer = None
+        self._edited_names = {}
 
         layout = QFormLayout(self)
         self._plugins = QComboBox(self)
+        self._plugins.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        self._plugins.setMinimumContentsLength(24)
         self._plugins.setPlaceholderText("Select an Overwrite plugin")
         layout.addRow("&Plugin", self._plugins)
 
@@ -61,6 +66,7 @@ class OverwritePicker(QDialog):
         self._destination = QLabel(self)
         self._destination.setTextFormat(Qt.TextFormat.PlainText)
         self._destination.setWordWrap(True)
+        self._destination.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         layout.addRow("Destination", self._destination)
 
         self._status = QLabel(self)
@@ -76,7 +82,7 @@ class OverwritePicker(QDialog):
         layout.addRow(buttons)
 
         self._plugins.currentIndexChanged.connect(self._selection_changed)
-        self._mod_name.textChanged.connect(self._validate_destination)
+        self._mod_name.textChanged.connect(self._name_changed)
         self._plugins.setEnabled(bool(self._candidates))
         self._populate()
 
@@ -98,9 +104,17 @@ class OverwritePicker(QDialog):
 
     def _selection_changed(self, index):
         selected = index >= 0
+        filename = self._visible[index].filename if selected else ""
+        self._plugins.setToolTip(filename)
         self._mod_name.setEnabled(selected)
         with QSignalBlocker(self._mod_name):
-            self._mod_name.setText(suggest_mod_name(self._visible[index].filename) if selected else "")
+            self._mod_name.setText(self._edited_names.get(filename, suggest_mod_name(filename)))
+        self._validate_destination()
+
+    def _name_changed(self, name):
+        index = self._plugins.currentIndex()
+        if index >= 0:
+            self._edited_names[self._visible[index].filename] = name
         self._validate_destination()
 
     def _validate_destination(self):
