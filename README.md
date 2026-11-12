@@ -8,11 +8,11 @@ Close MO2. If upgrading, remove the previous `esp2mod` or `overwrite_organizer` 
 
 ## Use
 
-1. Close the tool that created the plugin, then open **Tools → Move to New Mod...** in MO2.
-2. Select an Overwrite plugin. Use **Show all** to find older files.
-3. Review or edit the mod name, then click **Create Mod and Move**.
+1. Close the tool that created the plugin, then open Tools → Move to New Mod... in MO2.
+2. Select an ESP, ESM, or ESL from Overwrite. The most recently modified plugins appear first. If more than 10 are available, use Show all to view the complete list.
+3. Review or edit the suggested mod name, then click Create Mod and Move.
 
-Only the selected file moves. The new mod is enabled for the current profile. Overwrite and the mods directory must be on the same Windows volume. If MO2 changes the plugin's activation or load order, check the Plugins tab.
+Only the selected file is moved. The new mod is automatically enabled in the current MO2 profile.
 
 ## License
 
